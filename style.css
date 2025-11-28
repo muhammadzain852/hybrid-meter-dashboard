@@ -1,162 +1,103 @@
-/* Import Premium Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap');
 
-/* ===============================
-   PROFESSIONAL DARK GREEN THEME
-   GLASS + NEON ENERGY UI
-   PREMIUM FONTS: POPPINS + INTER
-   =============================== */
+:root{
+  --bg:#071009;
+  --card: rgba(18,30,18,0.6);
+  --neon:#24f06a;
+  --muted:#9edfb0;
+  --accent:#19a64a;
+  --danger:#ff6b6b;
+  --glass-border: rgba(34,255,120,0.08);
+}
 
+*{box-sizing:border-box}
 body{
-  background:#0b0f0c;
+  margin:0;
   font-family:'Poppins', 'Inter', sans-serif;
-  padding:25px;
-  color:#d4ffd4;
+  background: linear-gradient(180deg,#051009 0%, #07140b 100%);
+  color:#dfffe0;
+  padding:22px;
 }
 
-/* MAIN TITLE */
-h1{
-  text-align:center;
-  color:#98ff98;
-  font-size:36px;
-  margin-bottom:30px;
-  font-weight:600;
-  letter-spacing:0.5px;
-  text-shadow:0 0 12px rgba(0,255,100,0.6);
-  font-family:'Inter', sans-serif;
-}
-
-/* CONTAINER */
-.container{
+/* Topbar */
+.topbar{
   display:flex;
-  gap:25px;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom:18px;
+}
+.brand{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.logo{
+  width:48px;height:48px;border-radius:10px;
+  background:linear-gradient(135deg,#0f3 10%, #082 70%);
+  display:flex;align-items:center;justify-content:center;
+  color:#042; font-weight:700; box-shadow:0 6px 18px rgba(0,255,120,0.08);
+}
+.title{font-size:18px;color:var(--neon);font-weight:600}
+.subtitle{font-size:12px;color:var(--muted)}
+
+.rates{font-size:13px;color:#cffecc;text-align:right}
+
+/* Layout */
+.main{
+  display:flex;
+  gap:20px;
+  align-items:flex-start;
   justify-content:center;
-  margin-bottom:25px;
+  flex-wrap:wrap;
 }
 
-/* GLASS CARD DESIGN */
+/* Cards */
 .card{
-  background:rgba(22,32,22,0.60);
-  backdrop-filter:blur(16px);
-  padding:20px;
-  border-radius:14px;
-  width:330px;
-  border:1px solid rgba(0,255,140,0.15);
-  box-shadow:0 0 15px rgba(0,255,100,0.15);
-  transition:0.2s ease;
+  width:360px;
+  background:var(--card);
+  border-radius:12px;
+  padding:18px;
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
 }
 
-.card:hover{
-  box-shadow:0 0 25px rgba(0,255,100,0.25);
-  transform:translateY(-3px);
+/* Controls */
+.controls h2, .info h2{margin:0 0 12px 0;color:#bfffc9}
+.mode-row, .load-row, .recharge-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.btn{
+  background:#0f2412;border:1px solid rgba(22,100,40,0.4);
+  color:var(--muted);padding:10px 14px;border-radius:8px;cursor:pointer;
+  transition:0.15s ease; font-weight:600;
 }
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,255,120,0.06)}
+.btn.primary{background:linear-gradient(180deg,#1a6b32,#174f29); color:#eaffea}
+.btn.danger{background:#3d1414;border-color:#8a2e2e;color:#ffdede}
 
-/* CARD HEADING */
-.card h2{
-  color:#b4ffb4;
-  font-size:22px;
-  margin-bottom:15px;
-  font-weight:500;
-  letter-spacing:0.5px;
-  text-shadow:0 0 8px rgba(0,255,150,0.3);
-}
+input[type=number]{padding:10px;border-radius:8px;border:1px solid rgba(20,80,30,0.3);background:transparent;color:#eaffea;width:130px}
 
-/* BUTTONS */
-button{
-  padding:10px 18px;
-  margin:6px;
-  border-radius:8px;
-  background:#142414;
-  border:1px solid #158d42;
-  color:#d4ffd4;
-  cursor:pointer;
-  font-size:15px;
-  transition:0.2s;
-  letter-spacing:0.4px;
-  font-family:'Poppins', sans-serif;
-}
+/* status */
+.status-row{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+#modeBadge{color:var(--neon);font-weight:700}
+#errorBanner{margin-top:10px;padding:10px;border-radius:8px;background:rgba(255,90,90,0.06);color:var(--danger);font-weight:600}
 
-button:hover{
-  background:#186b2f;
-  box-shadow:0 0 12px rgba(0,255,80,0.4);
-}
+/* Info */
+.info .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item .label{font-size:12px;color:#bfeccb}
+.item .value{font-size:16px;color:#eaffea;font-weight:700}
 
-/* DANGER BUTTON */
-button.danger{
-  background:#441212;
-  border-color:#c64242;
-  color:#ffd4d4;
-}
+/* Panels */
+.panels{display:flex;gap:12px;margin-top:14px}
+.panel{background:rgba(14,34,14,0.45);padding:12px;border-radius:8px;border:1px solid var(--glass-border);width:170px}
+.panel h3{margin:0 0 8px 0;color:#aefbb8;font-weight:600}
 
-button.danger:hover{
-  background:#7a1b1b;
-  box-shadow:0 0 12px rgba(255,0,0,0.4);
-}
+/* footer */
+.footer{text-align:center;margin-top:18px;color:#9edfb0;font-size:13px}
 
-/* INPUT */
-input{
-  background:#142414;
-  color:#d4ffd4;
-  border:1px solid #158d42;
-  padding:10px;
-  border-radius:8px;
-  width:140px;
-  font-size:14px;
-  font-family:'Poppins', sans-serif;
-}
-
-input:focus{
-  outline:none;
-  border-color:#22ff88;
-  box-shadow:0 0 10px rgba(0,255,120,0.5);
-}
-
-/* PANELS */
-.panelBox{
-  display:flex;
-  justify-content:center;
-  gap:25px;
-}
-
-.panel{
-  width:280px;
-  padding:20px;
-  border-radius:14px;
-  background:rgba(22,32,22,0.55);
-  backdrop-filter:blur(16px);
-  border:1px solid rgba(0,255,140,0.15);
-  box-shadow:0 0 15px rgba(0,255,100,0.15);
-}
-
-.panel h3{
-  margin-top:0;
-  color:#a8ffb0;
-  font-size:20px;
-  font-weight:500;
-  text-shadow:0 0 8px rgba(0,255,150,0.3);
-  font-family:'Inter', sans-serif;
-}
-
-p{
-  font-size:15px;
-  margin:6px 0;
-  font-family:'Poppins', sans-serif;
-}
-
-p span{
-  color:#baffc0;
-  font-weight:600;
-}
-
-.warn{
-  color:#ff6b6b;
-  font-weight:bold;
-  font-size:14px;
-  font-family:'Inter', sans-serif;
-}
-
-/* RESPONSIVE */
-@media (max-width:850px){
-  .container{flex-direction:column;align-items:center;}
-  .panelBox{flex-direction:column;align-items:center;}
+/* Responsive */
+@media (max-width:860px){
+  .main{flex-direction:column;align-items:center}
+  .card{width:92%}
+  .panels{flex-wrap:wrap;justify-content:center}
 }

@@ -1,76 +1,90 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Hybrid Prepaid Bidirectional Meter</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hybrid Prepaid Bidirectional Meter - Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">⚡</div>
+      <div>
+        <div class="title">Hybrid Prepaid Bidirectional Meter</div>
+        <div class="subtitle" id="meterIdLabel">Meter: meter1</div>
+      </div>
+    </div>
+    <div class="rates">
+      <div>Grid: <strong>Rs 50 / kWh</strong></div>
+      <div>Inverter: <strong>Rs 20 / kWh</strong></div>
+    </div>
+  </header>
 
-  <h1>Hybrid Prepaid Bidirectional Meter</h1>
-
-  <div class="container">
-
-    <div class="card">
+  <main class="main">
+    <section class="controls card">
       <h2>Controls</h2>
 
-      <button id="gridBtn">Enable Grid</button>
-      <button id="invBtn">Enable Inverter</button>
+      <div class="mode-row">
+        <button id="gridBtn" class="btn">Enable Grid</button>
+        <button id="invBtn" class="btn">Enable Inverter</button>
+      </div>
 
-      <br><br>
+      <div class="load-row">
+        <button id="loadOnBtn" class="btn primary">Load ON</button>
+        <button id="loadOffBtn" class="btn">Load OFF</button>
+        <button id="resetBtn" class="btn danger">Reset All</button>
+      </div>
 
-      <button id="loadOnBtn">Load ON</button>
-      <button id="loadOffBtn">Load OFF</button>
+      <div class="recharge-row">
+        <input id="rechargeInput" type="number" step="0.001" placeholder="kWh to add">
+        <button id="rechargeBtn" class="btn">Recharge</button>
+      </div>
 
-      <br><br>
+      <div class="status-row">
+        <div>Mode: <span id="modeBadge">Grid</span></div>
+        <div>Balance: <span id="balance">0.000</span> kWh</div>
+        <div>Total Cost: <span id="totalCost">Rs 0.00</span></div>
+      </div>
 
-      <input id="rechargeInput" placeholder="kWh to add" type="number" step="0.001">
-      <button id="rechargeBtn">Recharge</button>
+      <div id="errorBanner" class="error-banner" hidden></div>
+    </section>
 
-      <br><br>
-
-      <button id="resetBtn" class="danger">Reset All</button>
-
-      <hr>
-
-      <p>Source: <span id="modeBadge">Grid</span></p>
-      <p>Balance: <span id="balance">0.000 kWh</span></p>
-
-    </div>
-
-    <div class="card">
+    <section class="info card">
       <h2>Live Info</h2>
-      <p>Load Power: <span id="loadPower">0 W</span></p>
-      <p>Net Energy: <span id="netEnergy">0.000 kWh</span></p>
-      <p>Cost: <span id="costInfo">Rs. 0.00</span></p>
-      <p id="direction">Direction: Idle</p>
-      <p id="overloadMsg" class="warn"></p>
-    </div>
+      <div class="live-grid">
+        <div class="item"><div class="label">Load Power</div><div id="loadPower" class="value">0 W</div></div>
+        <div class="item"><div class="label">Net Energy</div><div id="netEnergy" class="value">0.000 kWh</div></div>
+        <div class="item"><div class="label">Direction</div><div id="direction" class="value">Idle</div></div>
+        <div class="item"><div class="label">Overload</div><div id="overloadMsg" class="value warn"></div></div>
+      </div>
 
-  </div>
+      <div class="panels">
+        <div class="panel">
+          <h3>Import (Grid)</h3>
+          <div>V: <span id="impV">0</span> V</div>
+          <div>I: <span id="impI">0</span> A</div>
+          <div>P: <span id="impP">0</span> W</div>
+          <div>kWh: <span id="impK">0.000</span></div>
+        </div>
+        <div class="panel">
+          <h3>Export (Inverter)</h3>
+          <div>V: <span id="expV">0</span> V</div>
+          <div>I: <span id="expI">0</span> A</div>
+          <div>P: <span id="expP">0</span> W</div>
+          <div>kWh: <span id="expK">0.000</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-  <div class="panelBox">
+  <footer class="footer">Demo · Hybrid Prepaid Bidirectional Meter</footer>
 
-    <div class="panel">
-      <h3>Import (Grid)</h3>
-      <p>Voltage: <span id="impV">0</span></p>
-      <p>Current: <span id="impI">0</span></p>
-      <p>Power: <span id="impP">0</span></p>
-      <p>kWh: <span id="impK">0</span></p>
-    </div>
-
-    <div class="panel">
-      <h3>Export (Inverter)</h3>
-      <p>Voltage: <span id="expV">0</span></p>
-      <p>Current: <span id="expI">0</span></p>
-      <p>Power: <span id="expP">0</span></p>
-      <p>kWh: <span id="expK">0</span></p>
-    </div>
-
-  </div>
-
+  <!-- Firebase modular SDK -->
   <script type="module" src="app.js"></script>
-
 </body>
 </html>

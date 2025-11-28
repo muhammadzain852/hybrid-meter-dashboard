@@ -1,6 +1,11 @@
+// app.js - final dashboard logic (module)
+// requires index.html, style.css in same folder
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+import {
+  getDatabase, ref, onValue, set, get, update
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
+// ---- CONFIG ----
 const firebaseConfig = {
   apiKey: "AIzaSyDTczn4au45tZ0sTU_D_MfSMz8C-qdbH30",
   authDomain: "hybrid-prepaid-meter.firebaseapp.com",
@@ -10,93 +15,199 @@ const firebaseConfig = {
   messagingSenderId: "938034879077",
   appId: "1:938034879077:web:0c394171a9cdfd4d44c48c"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const meterPath = "/meters/meter1/";
+// ---- Meter selection ----
+const params = new URLSearchParams(window.location.search);
+const meter = params.get("meter") || "meter1";
+const basePath = `/meters/${meter}/`;
 
-// ------------------ BUTTON HANDLERS -------------------
+// ---- UI refs ----
+const gridBtn = document.getElementById("gridBtn");
+const invBtn  = document.getElementById("invBtn");
+const loadOnBtn = document.getElementById("loadOnBtn");
+const loadOffBtn = document.getElementById("loadOffBtn");
+const resetBtn = document.getElementById("resetBtn");
+const rechargeBtn = document.getElementById("rechargeBtn");
+const rechargeInput = document.getElementById("rechargeInput");
 
-document.getElementById("gridBtn").onclick = () =>
-  set(ref(db, meterPath + "source_is_grid"), true);
+const modeBadge = document.getElementById("modeBadge");
+const balanceSpan = document.getElementById("balance");
+const totalCostSpan = document.getElementById("totalCost");
+const meterIdLabel = document.getElementById("meterIdLabel");
+const errorBanner = document.getElementById("errorBanner");
 
-document.getElementById("invBtn").onclick = () =>
-  set(ref(db, meterPath + "source_is_grid"), false);
+const impV = document.getElementById("impV");
+const impI = document.getElementById("impI");
+const impP = document.getElementById("impP");
+const impK = document.getElementById("impK");
 
-document.getElementById("loadOnBtn").onclick = () =>
-  set(ref(db, meterPath + "load_status"), true);
+const expV = document.getElementById("expV");
+const expI = document.getElementById("expI");
+const expP = document.getElementById("expP");
+const expK = document.getElementById("expK");
 
-document.getElementById("loadOffBtn").onclick = () =>
-  set(ref(db, meterPath + "load_status"), false);
+const loadPower = document.getElementById("loadPower");
+const netEnergy = document.getElementById("netEnergy");
+const directionDiv = document.getElementById("direction");
+const overloadMsg = document.getElementById("overloadMsg");
 
-document.getElementById("rechargeBtn").onclick = async () => {
-  let add = parseFloat(document.getElementById("rechargeInput").value);
-  if(isNaN(add) || add <= 0){ alert("Enter valid kWh"); return; }
+// rates (display-only)
+const GRID_RATE = 50.0;
+const INV_RATE = 20.0;
 
-  let snap = await get(ref(db, meterPath + "balance"));
-  let curr = snap.exists() ? snap.val() : 0;
-  let newBal = curr + add;
+// set meter label
+meterIdLabel.textContent = `Meter: ${meter}`;
 
-  await set(ref(db, meterPath + "recharge_value"), add);
-  await set(ref(db, meterPath + "balance"), newBal);
-  alert("Recharged!");
-};
+// ---- realtime listener for whole meter ----
+onValue(ref(db, basePath), (snap) => {
+  const d = snap.val() || {};
 
-document.getElementById("resetBtn").onclick = () =>
-  set(ref(db, meterPath), {
-    source_is_grid:true,
-    load_status:false,
-    balance:0,
-    import_voltage:0,
-    import_current:0,
-    import_power:0,
-    import_kWh:0,
-    export_voltage:0,
-    export_current:0,
-    export_power:0,
-    export_kWh:0,
-    overload_msg:""
-  });
+  // State
+  const source_is_grid = d.source_is_grid ?? true;
+  const load_status = d.load_status ?? false;
+  const balance = parseFloat(d.balance ?? 0);
+  const totalCost = parseFloat(d.total_cost ?? 0);
 
-// ------------------ REALTIME LISTENER -------------------
+  // telemetry
+  const import_voltage = parseFloat(d.import_voltage ?? 0);
+  const import_current = parseFloat(d.import_current ?? 0);
+  const import_power = parseFloat(d.import_power ?? 0);
+  const import_kWh = parseFloat(d.import_kWh ?? 0);
 
-onValue(ref(db, meterPath), snap => {
-  let d = snap.val() || {};
+  const export_voltage = parseFloat(d.export_voltage ?? 0);
+  const export_current = parseFloat(d.export_current ?? 0);
+  const export_power = parseFloat(d.export_power ?? 0);
+  const export_kWh = parseFloat(d.export_kWh ?? 0);
 
-  document.getElementById("modeBadge").textContent =
-      d.source_is_grid ? "Grid" : "Inverter";
+  const overload_msg = d.overload_msg ?? "";
+  const error_msg = d.error_msg ?? "";
 
-  document.getElementById("balance").textContent =
-      (d.balance || 0).toFixed(3) + " kWh";
+  // UI updates
+  modeBadge.textContent = source_is_grid ? "Grid" : "Inverter";
+  balanceSpan.textContent = balance.toFixed(3);
+  totalCostSpan.textContent = `Rs ${totalCost.toFixed(2)}`;
 
-  document.getElementById("impV").textContent = d.import_voltage || 0;
-  document.getElementById("impI").textContent = d.import_current || 0;
-  document.getElementById("impP").textContent = d.import_power || 0;
-  document.getElementById("impK").textContent = d.import_kWh || 0;
+  impV.textContent = import_voltage.toFixed(1);
+  impI.textContent = import_current.toFixed(2);
+  impP.textContent = Math.round(import_power);
+  impK.textContent = import_kWh.toFixed(3);
 
-  document.getElementById("expV").textContent = d.export_voltage || 0;
-  document.getElementById("expI").textContent = d.export_current || 0;
-  document.getElementById("expP").textContent = d.export_power || 0;
-  document.getElementById("expK").textContent = d.export_kWh || 0;
+  expV.textContent = export_voltage.toFixed(1);
+  expI.textContent = export_current.toFixed(2);
+  expP.textContent = Math.round(export_power);
+  expK.textContent = export_kWh.toFixed(3);
 
-  let net = (d.import_kWh || 0) - (d.export_kWh || 0);
-  document.getElementById("netEnergy").textContent = net.toFixed(3) + " kWh";
-
-  let loadPower = d.load_status
-      ? (d.source_is_grid ? (d.import_power||0) : (d.export_power||0))
-      : 0;
-
-  document.getElementById("loadPower").textContent = loadPower + " W";
-
-  if(d.load_status){
-    document.getElementById("direction").textContent =
-      d.source_is_grid ? "Importing from Grid" : "Exporting from Inverter";
+  // load power & direction
+  let lp = 0;
+  if(load_status){
+    lp = source_is_grid ? import_power : export_power;
+    directionDiv.textContent = source_is_grid ? "Importing from Grid" : "Exporting from Inverter";
   } else {
-    document.getElementById("direction").textContent = "Idle";
+    directionDiv.textContent = "Idle";
+  }
+  loadPower.textContent = Math.round(lp) + " W";
+
+  // net energy
+  const net = (import_kWh || 0) - (export_kWh || 0);
+  netEnergy.textContent = net.toFixed(3) + " kWh";
+
+  // overload
+  overloadMsg.textContent = overload_msg || "";
+
+  // error handling & blocking UI
+  if(error_msg && error_msg.length > 1){
+    // show banner and popup
+    errorBanner.hidden = false;
+    errorBanner.textContent = error_msg;
+    // small non-blocking popup (once)
+    if(!window._shownErr || window._shownErr !== error_msg){
+      alert(error_msg);
+      window._shownErr = error_msg;
+    }
+  } else {
+    errorBanner.hidden = true;
+    errorBanner.textContent = "";
+    window._shownErr = "";
   }
 
-  document.getElementById("overloadMsg").textContent = d.overload_msg || "";
+  // Disable load ON button if Grid selected and balance <= 0
+  if(source_is_grid && balance <= 0){
+    loadOnBtn.disabled = true;
+    loadOnBtn.title = "Balance zero — recharge to enable Grid load";
+    loadOnBtn.classList.add("disabled");
+  } else {
+    loadOnBtn.disabled = false;
+    loadOnBtn.title = "";
+    loadOnBtn.classList.remove("disabled");
+  }
 });
 
-// END
+// ---- Button handlers ----
+gridBtn.addEventListener("click", async () => {
+  await set(ref(db, basePath + "source_is_grid"), true);
+});
+
+invBtn.addEventListener("click", async () => {
+  await set(ref(db, basePath + "source_is_grid"), false);
+});
+
+loadOnBtn.addEventListener("click", async () => {
+  // client-side safety: check balance & mode before sending request
+  const snap = await get(ref(db, basePath + "balance"));
+  const bal = snap.exists() ? parseFloat(snap.val()) : 0;
+  const modeSnap = await get(ref(db, basePath + "source_is_grid"));
+  const srcGrid = modeSnap.exists() ? !!modeSnap.val() : true;
+
+  if(srcGrid && bal <= 0){
+    alert("Balance is zero. Recharge first to enable Grid load.");
+    return;
+  }
+
+  // set load_status true — ESP32 will actually switch relays
+  await set(ref(db, basePath + "load_status"), true);
+});
+
+loadOffBtn.addEventListener("click", async () => {
+  await set(ref(db, basePath + "load_status"), false);
+});
+
+rechargeBtn.addEventListener("click", async () => {
+  const add = parseFloat(rechargeInput.value);
+  if(isNaN(add) || add <= 0){ alert("Enter valid kWh to add"); return; }
+
+  // atomic-ish update: read balance then update
+  const snap = await get(ref(db, basePath + "balance"));
+  const curr = snap.exists() ? parseFloat(snap.val()) : 0;
+  const newBal = curr + add;
+
+  await set(ref(db, basePath + "recharge_value"), add);
+  await set(ref(db, basePath + "balance"), newBal);
+
+  // clear error msg if recharged
+  await set(ref(db, basePath + "error_msg"), "");
+  alert(`Recharged ${add} kWh`);
+  rechargeInput.value = "";
+});
+
+resetBtn.addEventListener("click", async () => {
+  if(!confirm("Reset ALL data for demo?")) return;
+  await set(ref(db, basePath), {
+    source_is_grid: true,
+    load_status: false,
+    balance: 0,
+    total_cost: 0,
+    import_voltage: 0,
+    import_current: 0,
+    import_power: 0,
+    import_kWh: 0,
+    export_voltage: 0,
+    export_current: 0,
+    export_power: 0,
+    export_kWh: 0,
+    error_msg: "",
+    overload_msg: ""
+  });
+  alert("Reset done");
+});
