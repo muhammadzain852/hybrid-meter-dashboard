@@ -175,19 +175,30 @@ loadOffBtn.addEventListener("click", async () => {
 
 rechargeBtn.addEventListener("click", async () => {
   const add = parseFloat(rechargeInput.value);
-  if(isNaN(add) || add <= 0){ alert("Enter valid kWh to add"); return; }
+  if (isNaN(add) || add <= 0) {
+    alert("Enter valid units (kWh)");
+    return;
+  }
 
-  // atomic-ish update: read balance then update
-  const snap = await get(ref(db, basePath + "balance"));
-  const curr = snap.exists() ? parseFloat(snap.val()) : 0;
-  const newBal = curr + add;
+  // Read current balance
+  const balSnap = await get(ref(db, basePath + "balance"));
+  const currBal = balSnap.exists() ? parseFloat(balSnap.val()) : 0;
 
-  await set(ref(db, basePath + "recharge_value"), add);
-  await set(ref(db, basePath + "balance"), newBal);
+  // Read current total cost
+  const costSnap = await get(ref(db, basePath + "total_cost"));
+  const currCost = costSnap.exists() ? parseFloat(costSnap.val()) : 0;
 
-  // clear error msg if recharged
-  await set(ref(db, basePath + "error_msg"), "");
-  alert(`Recharged ${add} kWh`);
+  // Recharge rate (Grid only)
+  const rechargeCost = add * 50;   // 50 Rs per unit
+
+  // Update new values
+  await update(ref(db, basePath), {
+    balance: currBal + add,
+    total_cost: currCost + rechargeCost,
+    error_msg: ""
+  });
+
+  alert(`Recharge Successful!\nUnits Added: ${add}\nCost Added: Rs ${rechargeCost}`);
   rechargeInput.value = "";
 });
 
