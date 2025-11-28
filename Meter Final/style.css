@@ -1,0 +1,55 @@
+body{
+  background:#f4f4f4;
+  font-family:Arial;
+  padding:20px;
+}
+
+h1{text-align:center;}
+
+.container{
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  margin-bottom:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+button{
+  padding:10px 15px;
+  margin:5px;
+  border-radius:5px;
+  border:1px solid #999;
+  background:white;
+  cursor:pointer;
+}
+
+button.danger{
+  background:#ffb3b3;
+  border-color:#ff5c5c;
+}
+
+.panelBox{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+}
+
+.panel{
+  width:250px;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.warn{
+  color:red;
+  font-weight:bold;
+}
