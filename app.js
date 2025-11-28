@@ -175,50 +175,49 @@ loadOffBtn.addEventListener("click", async () => {
 
 rechargeBtn.addEventListener("click", async () => {
   const add = parseFloat(rechargeInput.value);
-  if (isNaN(add) || add <= 0) {
-    alert("Enter valid units (kWh)");
-    return;
-  }
+  if(isNaN(add) || add <= 0){ alert("Enter valid kWh to add"); return; }
 
-  // Read current balance
-  const balSnap = await get(ref(db, basePath + "balance"));
-  const currBal = balSnap.exists() ? parseFloat(balSnap.val()) : 0;
+  // atomic-ish update: read balance then update
+  const snap = await get(ref(db, basePath + "balance"));
+  const curr = snap.exists() ? parseFloat(snap.val()) : 0;
+  const newBal = curr + add;
 
-  // Read current total cost
-  const costSnap = await get(ref(db, basePath + "total_cost"));
-  const currCost = costSnap.exists() ? parseFloat(costSnap.val()) : 0;
+  await set(ref(db, basePath + "recharge_value"), add);
+  await set(ref(db, basePath + "balance"), newBal);
 
-  // Recharge rate (Grid only)
-  const rechargeCost = add * 50;   // 50 Rs per unit
-
-  // Update new values
-  await update(ref(db, basePath), {
-    balance: currBal + add,
-    total_cost: currCost + rechargeCost,
-    error_msg: ""
-  });
-
-  alert(`Recharge Successful!\nUnits Added: ${add}\nCost Added: Rs ${rechargeCost}`);
+  // clear error msg if recharged
+  await set(ref(db, basePath + "error_msg"), "");
+  alert(`Recharged ${add} kWh`);
   rechargeInput.value = "";
 });
 
 resetBtn.addEventListener("click", async () => {
-  if(!confirm("Reset ALL data for demo?")) return;
-  await set(ref(db, basePath), {
+  if (!confirm("Are you sure you want to reset EVERYTHING?")) return;
+
+  // Full reset values
+  const resetData = {
     source_is_grid: true,
     load_status: false,
     balance: 0,
     total_cost: 0,
+
     import_voltage: 0,
     import_current: 0,
     import_power: 0,
     import_kWh: 0,
+
     export_voltage: 0,
     export_current: 0,
     export_power: 0,
     export_kWh: 0,
+
     error_msg: "",
-    overload_msg: ""
-  });
-  alert("Reset done");
+    overload_msg: "",
+    recharge_value: 0
+  };
+
+  await set(ref(db, basePath), resetData);
+
+  alert("Reset Complete ✔\nAll data cleared.");
 });
+
