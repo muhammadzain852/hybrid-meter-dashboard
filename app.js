@@ -319,5 +319,21 @@ saveSettings.addEventListener("click", async () => {
   });
   alert("Settings saved.");
 });
+/* -----------------------------------------
+   MOBILE SIDEBAR OPEN / CLOSE
+----------------------------------------- */
+const sidebarMobile = document.querySelector(".sidebar");
+const overlayMobile = document.getElementById("overlay");
+const hamburgerMobile = document.getElementById("hamburgerBtn");
+
+hamburgerMobile.addEventListener("click", () => {
+  sidebarMobile.classList.add("open");
+  overlayMobile.classList.add("show");
+});
+
+overlayMobile.addEventListener("click", () => {
+  sidebarMobile.classList.remove("open");
+  overlayMobile.classList.remove("show");
+});
 
 // --- end of file ---

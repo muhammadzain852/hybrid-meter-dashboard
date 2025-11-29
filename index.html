@@ -3,23 +3,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hybrid Prepaid Bidirectional Meter - Dashboard</title>
+  <title>Hybrid Prepaid Energy Meter - Dashboard</title>
 
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome for icons -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- 🌟 MOBILE HAMBURGER BUTTON -->
+  <div id="hamburgerBtn" class="hamburger">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+
+  <!-- 🌟 MOBILE OVERLAY -->
+  <div id="overlay" class="overlay"></div>
+
   <!-- LOGIN / AUTH SCREEN -->
   <div id="auth-screen" class="auth-screen">
     <div class="auth-card">
       <div class="auth-brand">
         <div class="logo">⚡</div>
-        <h1>EnergyPro</h1>
+        <h1>Electro X</h1>
         <p>Prepaid Bidirectional Energy Meter</p>
       </div>
 
@@ -48,7 +57,7 @@
 
       <div id="authError" class="auth-error"></div>
     </div>
-    <div class="auth-footer">Demo · Hybrid Prepaid Bidirectional Meter</div>
+    <div class="auth-footer">Demo · Hybrid Prepaid Energy Meter</div>
   </div>
 
   <!-- APP LAYOUT (hidden until auth) -->
@@ -60,10 +69,18 @@
       </div>
 
       <nav class="menu">
-        <button class="menu-item active" data-panel="dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</button>
-        <button class="menu-item" data-panel="control"><i class="fa-solid fa-toggle-on"></i> Control</button>
-        <button class="menu-item" data-panel="settings"><i class="fa-solid fa-gear"></i> Settings</button>
-        <button class="menu-item" id="signOutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        <button class="menu-item active" data-panel="dashboard">
+          <i class="fa-solid fa-gauge"></i> Dashboard
+        </button>
+        <button class="menu-item" data-panel="control">
+          <i class="fa-solid fa-toggle-on"></i> Control
+        </button>
+        <button class="menu-item" data-panel="settings">
+          <i class="fa-solid fa-gear"></i> Settings
+        </button>
+        <button class="menu-item" id="signOutBtn">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
       </nav>
 
       <div class="sidebar-footer">
@@ -75,13 +92,13 @@
       <!-- Top bar -->
       <header class="topbar">
         <div class="left">Hybrid Prepaid Bidirectional Meter</div>
-        <div class="right">
-          <span id="userEmail"></span>
-        </div>
+        <div class="right"><span id="userEmail"></span></div>
       </header>
 
+      <!-- DASHBOARD PANEL -->
       <section id="panel-dashboard" class="panel">
         <div class="grid-2">
+
           <div class="card">
             <h3>Overview</h3>
             <div class="two-col">
@@ -134,15 +151,18 @@
         </div>
       </section>
 
+      <!-- CONTROL PANEL -->
       <section id="panel-control" class="panel hidden">
         <div class="grid-2">
           <div class="card">
             <h3>Controls</h3>
             <div class="controls">
+
               <div class="btn-row">
                 <button id="gridBtn" class="btn">Enable Grid</button>
                 <button id="invBtn" class="btn">Enable Inverter</button>
               </div>
+
               <div class="btn-row">
                 <button id="loadOnBtn" class="btn primary">Load ON</button>
                 <button id="loadOffBtn" class="btn">Load OFF</button>
@@ -159,6 +179,7 @@
                 <p>Balance: <strong id="balSmall">0.000 kWh</strong></p>
                 <p>Total Cost: <strong id="costSmall">Rs 0.00</strong></p>
               </div>
+
             </div>
           </div>
 
@@ -170,13 +191,16 @@
         </div>
       </section>
 
+      <!-- SETTINGS PANEL -->
       <section id="panel-settings" class="panel hidden">
         <div class="card">
           <h3>System Settings</h3>
+
           <div class="form-row">
             <label>Over Voltage Threshold (V)</label>
             <input id="ovThreshold" type="number" value="260" />
           </div>
+
           <div class="form-row">
             <label>Over Current Threshold (A)</label>
             <input id="ocThreshold" type="number" value="10" />

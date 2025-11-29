@@ -78,3 +78,55 @@ body{margin:0;background:var(--bg);color:#0f172a;font-family:Inter, sans-serif}
   .sidebar{display:none}
   .auth-card{width:96%}
 }
+/* ---------------------- */
+/*   MOBILE SIDEBAR FIX   */
+/* ---------------------- */
+
+.hamburger {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 26px;
+  z-index: 2000;
+  background: #07203a;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: none;
+}
+
+@media (max-width:980px){
+  .hamburger {
+    display: block;
+  }
+  .sidebar {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 240px;
+    height: 100%;
+    z-index: 1500;
+    transition: 0.3s ease;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .overlay {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.55);
+    opacity:0;
+    visibility:hidden;
+    transition:0.3s;
+    z-index:1200;
+  }
+  .overlay.show {
+    opacity:1;
+    visibility:visible;
+  }
+}
