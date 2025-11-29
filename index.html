@@ -1,90 +1,203 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Hybrid Prepaid Bidirectional Meter - Dashboard</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">⚡</div>
-      <div>
-        <div class="title">Hybrid Prepaid Bidirectional Meter</div>
-        <div class="subtitle" id="meterIdLabel">Meter: meter1</div>
-      </div>
-    </div>
-    <div class="rates">
-      <div>Grid: <strong>Rs 50 / kWh</strong></div>
-      <div>Inverter: <strong>Rs 20 / kWh</strong></div>
-    </div>
-  </header>
-
-  <main class="main">
-    <section class="controls card">
-      <h2>Controls</h2>
-
-      <div class="mode-row">
-        <button id="gridBtn" class="btn">Enable Grid</button>
-        <button id="invBtn" class="btn">Enable Inverter</button>
+  <!-- LOGIN / AUTH SCREEN -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="logo">⚡</div>
+        <h1>EnergyPro</h1>
+        <p>Prepaid Bidirectional Energy Meter</p>
       </div>
 
-      <div class="load-row">
-        <button id="loadOnBtn" class="btn primary">Load ON</button>
-        <button id="loadOffBtn" class="btn">Load OFF</button>
-        <button id="resetBtn" class="btn danger">Reset All</button>
-      </div>
-
-      <div class="recharge-row">
-        <input id="rechargeInput" type="number" step="0.001" placeholder="kWh to add">
-        <button id="rechargeBtn" class="btn">Recharge</button>
-      </div>
-
-      <div class="status-row">
-        <div>Mode: <span id="modeBadge">Grid</span></div>
-        <div>Balance: <span id="balance">0.000</span> kWh</div>
-        <div>Total Cost: <span id="totalCost">Rs 0.00</span></div>
-      </div>
-
-      <div id="errorBanner" class="error-banner" hidden></div>
-    </section>
-
-    <section class="info card">
-      <h2>Live Info</h2>
-      <div class="live-grid">
-        <div class="item"><div class="label">Load Power</div><div id="loadPower" class="value">0 W</div></div>
-        <div class="item"><div class="label">Net Energy</div><div id="netEnergy" class="value">0.000 kWh</div></div>
-        <div class="item"><div class="label">Direction</div><div id="direction" class="value">Idle</div></div>
-        <div class="item"><div class="label">Overload</div><div id="overloadMsg" class="value warn"></div></div>
-      </div>
-
-      <div class="panels">
-        <div class="panel">
-          <h3>Import (Grid)</h3>
-          <div>V: <span id="impV">0</span> V</div>
-          <div>I: <span id="impI">0</span> A</div>
-          <div>P: <span id="impP">0</span> W</div>
-          <div>kWh: <span id="impK">0.000</span></div>
+      <form id="loginForm" class="auth-form">
+        <input id="email" type="email" placeholder="Email" required />
+        <input id="password" type="password" placeholder="Password" required />
+        <button id="loginBtn" type="submit" class="btn primary">Sign in</button>
+        <div class="auth-actions">
+          <a id="showRegister" href="#">Create account</a>
+          <a id="showReset" href="#">Forgot password?</a>
         </div>
-        <div class="panel">
-          <h3>Export (Inverter)</h3>
-          <div>V: <span id="expV">0</span> V</div>
-          <div>I: <span id="expI">0</span> A</div>
-          <div>P: <span id="expP">0</span> W</div>
-          <div>kWh: <span id="expK">0.000</span></div>
-        </div>
+      </form>
+
+      <form id="registerForm" class="auth-form hidden">
+        <input id="r_email" type="email" placeholder="Email" required />
+        <input id="r_password" type="password" placeholder="Password (≥6)" required />
+        <button id="registerBtn" type="submit" class="btn primary">Create account</button>
+        <div class="auth-actions"><a id="showLogin" href="#">Back to sign in</a></div>
+      </form>
+
+      <form id="resetForm" class="auth-form hidden">
+        <input id="reset_email" type="email" placeholder="Enter your email" required />
+        <button id="resetBtnSend" type="submit" class="btn">Send reset link</button>
+        <div class="auth-actions"><a id="showLogin2" href="#">Back to sign in</a></div>
+      </form>
+
+      <div id="authError" class="auth-error"></div>
+    </div>
+    <div class="auth-footer">Demo · Hybrid Prepaid Bidirectional Meter</div>
+  </div>
+
+  <!-- APP LAYOUT (hidden until auth) -->
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">⚡</div>
+        <div class="title">EnergyPro</div>
       </div>
-    </section>
-  </main>
 
-  <footer class="footer">Demo · Hybrid Prepaid Bidirectional Meter</footer>
+      <nav class="menu">
+        <button class="menu-item active" data-panel="dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</button>
+        <button class="menu-item" data-panel="control"><i class="fa-solid fa-toggle-on"></i> Control</button>
+        <button class="menu-item" data-panel="settings"><i class="fa-solid fa-gear"></i> Settings</button>
+        <button class="menu-item" id="signOutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </nav>
 
-  <!-- Firebase modular SDK -->
+      <div class="sidebar-footer">
+        <small id="meterLabel">Meter: meter1</small>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- Top bar -->
+      <header class="topbar">
+        <div class="left">Hybrid Prepaid Bidirectional Meter</div>
+        <div class="right">
+          <span id="userEmail"></span>
+        </div>
+      </header>
+
+      <section id="panel-dashboard" class="panel">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Overview</h3>
+            <div class="two-col">
+              <div>
+                <p class="muted">Mode</p>
+                <h2 id="modeBadge">Grid</h2>
+
+                <p class="muted">Balance</p>
+                <h2 id="balance">0.000 kWh</h2>
+
+                <p class="muted">Total Cost</p>
+                <h3 id="totalCost">Rs 0.00</h3>
+              </div>
+
+              <div>
+                <p class="muted">Load Power</p>
+                <h2 id="loadPower">0 W</h2>
+
+                <p class="muted">Net Energy</p>
+                <h3 id="netEnergy">0.000 kWh</h3>
+
+                <p class="muted">Direction</p>
+                <h3 id="direction">Idle</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Live Readings</h3>
+            <div class="two-col mini">
+              <div class="mini-card">
+                <h4>Import (Grid)</h4>
+                <p>V: <span id="impV">0</span> V</p>
+                <p>I: <span id="impI">0.00</span> A</p>
+                <p>P: <span id="impP">0</span> W</p>
+                <p>kWh: <span id="impK">0.000</span></p>
+              </div>
+              <div class="mini-card">
+                <h4>Export (Inverter)</h4>
+                <p>V: <span id="expV">0</span> V</p>
+                <p>I: <span id="expI">0.00</span> A</p>
+                <p>P: <span id="expP">0</span> W</p>
+                <p>kWh: <span id="expK">0.000</span></p>
+              </div>
+            </div>
+
+            <div id="errorBanner" class="error-banner hidden"></div>
+            <div id="overloadMsg" class="muted small"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-control" class="panel hidden">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Controls</h3>
+            <div class="controls">
+              <div class="btn-row">
+                <button id="gridBtn" class="btn">Enable Grid</button>
+                <button id="invBtn" class="btn">Enable Inverter</button>
+              </div>
+              <div class="btn-row">
+                <button id="loadOnBtn" class="btn primary">Load ON</button>
+                <button id="loadOffBtn" class="btn">Load OFF</button>
+                <button id="resetBtn" class="btn danger">Reset All</button>
+              </div>
+
+              <div class="recharge">
+                <input id="rechargeInput" type="number" step="0.001" placeholder="kWh to add" />
+                <button id="rechargeBtn" class="btn">Recharge</button>
+              </div>
+
+              <div class="muted small">
+                <p>Mode: <strong id="modeSmall">Grid</strong></p>
+                <p>Balance: <strong id="balSmall">0.000 kWh</strong></p>
+                <p>Total Cost: <strong id="costSmall">Rs 0.00</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Quick Status</h3>
+            <p>Latest telemetry shown on Dashboard. Use Controls to manage source and load.</p>
+            <div class="muted small">Note: Grid cost = Rs 50/kWh (Recharge)</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-settings" class="panel hidden">
+        <div class="card">
+          <h3>System Settings</h3>
+          <div class="form-row">
+            <label>Over Voltage Threshold (V)</label>
+            <input id="ovThreshold" type="number" value="260" />
+          </div>
+          <div class="form-row">
+            <label>Over Current Threshold (A)</label>
+            <input id="ocThreshold" type="number" value="10" />
+          </div>
+
+          <div class="form-row">
+            <label>Minimum Balance Threshold (kWh)</label>
+            <input id="minBalance" type="number" step="0.001" value="0.000" />
+          </div>
+
+          <div class="btn-row">
+            <button id="saveSettings" class="btn primary">Save All Settings</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">Demo · Hybrid Prepaid Bidirectional Meter</footer>
+    </main>
+  </div>
+
+  <!-- App script -->
   <script type="module" src="app.js"></script>
 </body>
 </html>
